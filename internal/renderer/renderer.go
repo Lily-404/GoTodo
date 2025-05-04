@@ -45,26 +45,26 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 		}
 	}
 
-    // 获取未完成任务后，按优先级排序
-    priorityWeight := map[string]int{
-        "high":   3,
-        "normal": 2,
-        "low":    1,
-    }
+	// 获取未完成任务后，按优先级排序
+	priorityWeight := map[string]int{
+		"high":   3,
+		"normal": 2,
+		"low":    1,
+	}
 
-    // 对未完成任务进行排序
-    sort.Slice(unfinishedNotes, func(i, j int) bool {
-        weightI := priorityWeight[unfinishedNotes[i].Priority]
-        weightJ := priorityWeight[unfinishedNotes[j].Priority]
-        if weightI == weightJ {
-            // 如果优先级相同，按创建时间排序（新的在前）
-            return unfinishedNotes[i].CreatedAt.After(unfinishedNotes[j].CreatedAt)
-        }
-        return weightI > weightJ
-    })
+	// 对未完成任务进行排序
+	sort.Slice(unfinishedNotes, func(i, j int) bool {
+		weightI := priorityWeight[unfinishedNotes[i].Priority]
+		weightJ := priorityWeight[unfinishedNotes[j].Priority]
+		if weightI == weightJ {
+			// 如果优先级相同，按创建时间排序（新的在前）
+			return unfinishedNotes[i].CreatedAt.After(unfinishedNotes[j].CreatedAt)
+		}
+		return weightI > weightJ
+	})
 
-    // 显示分隔线和未完成任务
-    divider.Println("  ──────────────────────────")
+	// 显示分隔线和未完成任务
+	divider.Println("  ──────────────────────────")
 	for _, note := range unfinishedNotes {
 		p := priority[note.Priority]
 		if p == nil {
@@ -107,23 +107,23 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 }
 
 func ShowProgressBar(total, completed int) {
-    width := 21  // 将宽度从30改为20，使显示更加紧凑
-    filled := int(float64(completed) / float64(total) * float64(width))
-    percent := int(float64(completed)/float64(total)*100)
+	width := 21 // 将宽度从30改为20，使显示更加紧凑
+	filled := int(float64(completed) / float64(total) * float64(width))
+	percent := int(float64(completed) / float64(total) * 100)
 
-    // 定义新的颜色方案
-    progress := color.New(color.FgHiCyan)    
-    remaining := color.New(color.FgHiBlack)  
-    percentage := color.New(color.FgHiCyan, color.Bold)  
+	// 定义新的颜色方案
+	progress := color.New(color.FgHiCyan)
+	remaining := color.New(color.FgHiBlack)
+	percentage := color.New(color.FgHiCyan, color.Bold)
 
-    fmt.Print("  ")  // 保持缩进
-    for i := 0; i < width; i++ {
-        if i < filled {
-            progress.Print("█")
-        } else {
-            remaining.Print("░")
-        }
-    }
-    fmt.Print(" ")  // 在进度条和百分比之间添加空格
-    percentage.Printf("%d%%", percent)
+	fmt.Print("  ") // 保持缩进
+	for i := 0; i < width; i++ {
+		if i < filled {
+			progress.Print("█")
+		} else {
+			remaining.Print("░")
+		}
+	}
+	fmt.Print(" ") // 在进度条和百分比之间添加空格
+	percentage.Printf("%d%%", percent)
 }

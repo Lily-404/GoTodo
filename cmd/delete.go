@@ -10,8 +10,8 @@ import (
 )
 
 var deleteCmd = &cobra.Command{
-	Use:     "delete",
-	Aliases: []string{"d", "del"},
+	Use:     "remove",
+	Aliases: []string{"r", "-"},
 	Short:   "删除一个未完成的任务",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 获取所有任务

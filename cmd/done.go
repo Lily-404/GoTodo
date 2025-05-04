@@ -12,10 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// 将 delete.go 重命名为 done.go
 var doneCmd = &cobra.Command{
 	Use:     "done",
-	Aliases: []string{"d"},
-	Short:   "Interactively complete tasks",
+	Aliases: []string{"d"},  // 保留 d 作为快捷命令
+	Short:   "标记任务为已完成",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {

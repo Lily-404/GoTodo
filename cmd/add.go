@@ -18,7 +18,7 @@ var (
 
 var addCmd = &cobra.Command{
 	Use:     "add [content]",
-	Aliases: []string{"a"},
+	Aliases: []string{"a","+"},
 	Short:   "Add a new note",
 	Example: `  gotodo add "Complete project documentation" -t "docs" -p high
   gotodo a "Reply to email" -t "work" -d "2024-01-20"`,
@@ -36,22 +36,22 @@ var addCmd = &cobra.Command{
 
 		// 创建优先级选择
 		priorityPrompt := promptui.Select{
-		    Label: "选择任务优先级",
-		    Items: []string{"high", "normal", "low"},
-		    Templates: &promptui.SelectTemplates{
-		        Label:    "{{ . }}",
-		        Active:   "➤ {{ . | cyan }}",
-		        Inactive: "  {{ . }}",
-		        Selected: "✓ {{ . | green }}",
-		    },
+			Label: "选择任务优先级",
+			Items: []string{"low", "normal", "high"},  // 改为从低到高的顺序
+			Templates: &promptui.SelectTemplates{
+				Label:    "{{ . }}",
+				Active:   "➤ {{ . | cyan }}",
+				Inactive: "  {{ . }}",
+				Selected: "✓ {{ . | green }}",
+			},
 		}
-		
+
 		priorityIdx, _, err := priorityPrompt.Run()
 		if err != nil {
-		    return fmt.Errorf("选择优先级失败: %v", err)
+			return fmt.Errorf("选择优先级失败: %v", err)
 		}
-		
-		priorities := []string{"high", "normal", "low"}
+
+		priorities := []string{"low", "normal", "high"}  // 这里也需要保持相同的顺序
 		note.Priority = priorities[priorityIdx]
 
 		if err := storage.AddNote(note); err != nil {

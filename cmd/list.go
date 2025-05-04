@@ -27,22 +27,18 @@ var listCmd = &cobra.Command{
 			return err
 		}
 		if len(notes) == 0 {
-			info.Println("  No tasks yet...")
+			info.Println("  没有任务...")
+			return nil
 		}
 
-		notes, err = storage.ListNotes()
-		if err != nil {
-			return err
-		}
-
-		renderer.RenderNotes(notes, showAll, filterPriority)
+		renderer.RenderNotes(notes, true, filterPriority)  // 将 showAll 改为 true
 		return nil
 	},
 }
 
 func init() {
 	help := color.New(color.FgHiBlue).SprintFunc()
-	listCmd.Flags().BoolVarP(&showAll, "all", "a", false, help("Show all tasks (including completed)"))
-	listCmd.Flags().StringVarP(&filterPriority, "priority", "p", "", help("Filter by priority (high/normal/low)"))
+	listCmd.Flags().BoolVarP(&showAll, "pending", "p", false, help("只显示未完成的任务"))  // 修改参数含义
+	listCmd.Flags().StringVarP(&filterPriority, "priority", "r", "", help("按优先级筛选 (high/normal/low)"))
 	rootCmd.AddCommand(listCmd)
 }

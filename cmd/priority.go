@@ -12,6 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	rootCmd.AddCommand(priorityCmd)
+}
+
 var priorityCmd = &cobra.Command{
 	Use:     "priority",
 	Aliases: []string{"p"},
@@ -58,8 +62,8 @@ var priorityCmd = &cobra.Command{
 			return err
 		}
 
-		// 选择新的优先级
-		priorities := []string{"high", "normal", "low"}
+		// 选择新的优先级（从低到高排序）
+		priorities := []string{"low", "normal", "high"}
 		priorityPrompt := promptui.Select{
 			Label: "选择新的优先级",
 			Items: priorities,
@@ -91,8 +95,4 @@ var priorityCmd = &cobra.Command{
 		renderer.RenderNotes(notes, false, "")
 		return nil
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(priorityCmd)
 }
