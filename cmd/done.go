@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"gotodo/internal/renderer"
-	"gotodo/internal/storage"
-	"gotodo/pkg/logger"
+	"github.com/Lily-404/todo/internal/renderer"
+	"github.com/Lily-404/todo/internal/storage"
+	"github.com/Lily-404/todo/pkg/logger"
 	"os"
 
 	"github.com/fatih/color"

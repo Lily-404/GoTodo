@@ -3,7 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
-	"gotodo/internal/config"
+	"github.com/Lily-404/todo/internal/config"
 	"os"
 	"path/filepath"
 	"time"

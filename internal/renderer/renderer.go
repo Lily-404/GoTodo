@@ -2,7 +2,7 @@ package renderer
 
 import (
 	"fmt"
-	"gotodo/internal/storage"
+	"github.com/Lily-404/todo/internal/storage"
 	"sort"
 
 	"github.com/fatih/color"
@@ -13,7 +13,7 @@ func ShowBanner() {
 	border := color.New(color.FgHiBlack)
 
 	logo.Print("\n  ┌────────────────────────┐\n")
-	logo.Print("  │         GoTodo         │")
+	logo.Print("  │         Go Todo        │")
 	logo.Print("\n  └────────────────────────┘\n")
 	border.Println("    Focus on What Matters.")
 }
@@ -22,7 +22,6 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 	// 定义更简洁的颜色方案
 	title := color.New(color.FgHiYellow, color.Bold)
 	done := color.New(color.FgHiBlack)
-	// stats := color.New(color.FgHiGreen)
 	date := color.New(color.FgHiMagenta)
 	divider := color.New(color.FgHiBlack)
 

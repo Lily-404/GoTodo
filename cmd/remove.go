@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"gotodo/internal/renderer"
-	"gotodo/internal/storage"
-	"gotodo/pkg/logger"
+	"github.com/Lily-404/todo/internal/renderer"
+	"github.com/Lily-404/todo/internal/storage"
+	"github.com/Lily-404/todo/pkg/logger"
 
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
@@ -21,40 +21,16 @@ var removeCmd = &cobra.Command{
 			return err
 		}
 
-		// 创建优先级选择
-		priorityPrompt := promptui.Select{
-			Label: "选择要删除的任务优先级",
-			Items: []string{"high", "normal", "low", "all"},
-			Templates: &promptui.SelectTemplates{
-				Label:    "{{ . }}",
-				Active:   "➤ {{ . | cyan }}",
-				Inactive: "  {{ . }}",
-				Selected: "✓ {{ . | green }}",
-			},
-		}
-
-		priorityIdx, _, err := priorityPrompt.Run()
-		if err != nil {
-			return fmt.Errorf("选择优先级失败: %v", err)
-		}
-
-		priorities := []string{"high", "normal", "low", "all"}
-		selectedPriority := priorities[priorityIdx]
-
-		// 过滤指定优先级的未完成任务
-		var filteredNotes []storage.Note
+		// 过滤未完成的任务
+		var unfinishedNotes []storage.Note
 		for _, note := range notes {
-			if note.Status != "done" && (selectedPriority == "all" || note.Priority == selectedPriority) {
-				filteredNotes = append(filteredNotes, note)
+			if note.Status != "done" {
+				unfinishedNotes = append(unfinishedNotes, note)
 			}
 		}
 
-		if len(filteredNotes) == 0 {
-			if selectedPriority == "all" {
-				color.Yellow("没有未完成的任务可供删除")
-			} else {
-				color.Yellow(fmt.Sprintf("没有优先级为 %s 的未完成任务可供删除", selectedPriority))
-			}
+		if len(unfinishedNotes) == 0 {
+			color.Yellow("没有未完成的任务可供删除")
 			return nil
 		}
 
@@ -68,7 +44,7 @@ var removeCmd = &cobra.Command{
 
 		prompt := promptui.Select{
 			Label:     "选择要删除的任务",
-			Items:     filteredNotes,
+			Items:     unfinishedNotes,
 			Templates: templates,
 			Size:      10,
 		}
@@ -78,7 +54,7 @@ var removeCmd = &cobra.Command{
 			return fmt.Errorf("选择任务失败: %v", err)
 		}
 
-		selectedNote := filteredNotes[idx]
+		selectedNote := unfinishedNotes[idx]
 
 		// 删除选中的任务
 		if err := storage.DeleteNote(selectedNote.ID); err != nil {

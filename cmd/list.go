@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"gotodo/internal/renderer"
-	"gotodo/internal/storage"
+	"github.com/Lily-404/todo/internal/renderer"
+	"github.com/Lily-404/todo/internal/storage"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -17,9 +17,9 @@ var listCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l"},
 	Short:   "List all tasks",
-	Example: `  gotodo list
-  gotodo list --all
-  gotodo list -p high`,
+	Example: `  todo list
+  todo list --all
+  todo list -p high`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		info := color.New(color.FgHiCyan, color.Bold)
 		notes, err := storage.ListNotes()

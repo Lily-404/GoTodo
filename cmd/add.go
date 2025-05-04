@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"gotodo/internal/renderer"
-	"gotodo/internal/storage"
+	"github.com/Lily-404/todo/internal/renderer"
+	"github.com/Lily-404/todo/internal/storage"
 	"time"
 
 	"github.com/manifoldco/promptui"
@@ -20,8 +20,8 @@ var addCmd = &cobra.Command{
 	Use:     "add [content]",
 	Aliases: []string{"a","+"},
 	Short:   "Add a new note",
-	Example: `  gotodo add "Complete project documentation" -t "docs" -p high
-  gotodo a "Reply to email" -t "work" -d "2024-01-20"`,
+	Example: `  todo add "Complete project documentation" -t "docs" -p high
+  todo a "Reply to email" -t "work" -d "2024-01-20"`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		content := args[0]

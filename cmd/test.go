@@ -20,7 +20,7 @@ var testCmd = &cobra.Command{
 
 		// 构建项目
 		info.Println("\n  Building project...")
-		buildCmd := exec.Command("go", "build", "-o", "gotodo")
+		buildCmd := exec.Command("go", "build", "-o", "todo")
 		buildCmd.Stdout = os.Stdout
 		buildCmd.Stderr = os.Stderr
 		if err := buildCmd.Run(); err != nil {
@@ -37,14 +37,14 @@ var testCmd = &cobra.Command{
 
 		// 测试添加任务
 		info.Println("1. Testing task addition:")
-		runCommand("./gotodo", "add", "Complete project docs", "-p", "high")
-		runCommand("./gotodo", "add", "Prepare meeting presentation", "-p", "normal")
-		runCommand("./gotodo", "add", "Reply to emails", "-p", "low")
+		runCommand("./todo", "add", "Complete project docs", "-p", "high")
+		runCommand("./todo", "add", "Prepare meeting presentation", "-p", "normal")
+		runCommand("./todo", "add", "Reply to emails", "-p", "low")
 		time.Sleep(time.Second)
 
 		// 测试列表显示
 		info.Println("\n2. Testing task list:")
-		runCommand("./gotodo", "list")
+		runCommand("./todo", "list")
 		time.Sleep(time.Second)
 
 		success.Println("\n  Tests completed!")
