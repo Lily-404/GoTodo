@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"hacknote/internal/renderer"
-	"hacknote/internal/storage"
-	"hacknote/pkg/logger"
+	"fmt"
+	"gotodo/internal/renderer"
+	"gotodo/internal/storage"
 	"time"
 
-	"github.com/fatih/color"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +17,11 @@ var (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add [内容]",
-	Short: "添加一条新的笔记",
-	Example: `  gotodo add "完成项目文档" -t "文档" -p high
-  gotodo add "回复邮件" -t "工作" -d "2024-01-20"`,
+	Use:     "add [content]",
+	Aliases: []string{"a"},
+	Short:   "Add a new note",
+	Example: `  gotodo add "Complete project documentation" -t "docs" -p high
+  gotodo a "Reply to email" -t "work" -d "2024-01-20"`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		content := args[0]
@@ -33,12 +34,29 @@ var addCmd = &cobra.Command{
 			CreatedAt: time.Now(),
 		}
 
+		// 创建优先级选择
+		priorityPrompt := promptui.Select{
+		    Label: "选择任务优先级",
+		    Items: []string{"high", "normal", "low"},
+		    Templates: &promptui.SelectTemplates{
+		        Label:    "{{ . }}",
+		        Active:   "➤ {{ . | cyan }}",
+		        Inactive: "  {{ . }}",
+		        Selected: "✓ {{ . | green }}",
+		    },
+		}
+		
+		priorityIdx, _, err := priorityPrompt.Run()
+		if err != nil {
+		    return fmt.Errorf("选择优先级失败: %v", err)
+		}
+		
+		priorities := []string{"high", "normal", "low"}
+		note.Priority = priorities[priorityIdx]
+
 		if err := storage.AddNote(note); err != nil {
 			return err
 		}
-
-		// 添加成功后显示提示
-		logger.Success("任务添加成功")
 
 		// 获取并显示所有未完成的任务
 		notes, err := storage.ListNotes()
@@ -46,15 +64,14 @@ var addCmd = &cobra.Command{
 			return err
 		}
 
-		color.New(color.FgHiCyan).Println("\n当前未完成的任务：")
 		renderer.RenderNotes(notes, false, "")
 		return nil
 	},
 }
 
 func init() {
-	addCmd.Flags().StringVarP(&title, "title", "t", "", "笔记标题")
-	addCmd.Flags().StringVarP(&priority, "priority", "p", "normal", "优先级 (high/normal/low)")
-	addCmd.Flags().StringVarP(&dueDate, "due", "d", "", "截止日期 (YYYY-MM-DD)")
+	addCmd.Flags().StringVarP(&title, "title", "t", "", "Note title")
+	addCmd.Flags().StringVarP(&priority, "priority", "p", "low", "Priority (high/normal/low)")
+	addCmd.Flags().StringVarP(&dueDate, "due", "d", "", "Due date (YYYY-MM-DD)")
 	rootCmd.AddCommand(addCmd)
 }

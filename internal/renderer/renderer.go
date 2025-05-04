@@ -1,25 +1,37 @@
 package renderer
 
 import (
-	"hacknote/internal/storage"
+	"fmt"
+	"gotodo/internal/storage"
+	"sort"
 
 	"github.com/fatih/color"
 )
 
 func ShowBanner() {
-	bold := color.New(color.FgHiCyan, color.Bold) // 使用青色作为标题
-	gray := color.New(color.FgHiBlack)            // 使用深灰色作为分隔线
+	logo := color.New(color.FgHiCyan, color.Bold)
+	border := color.New(color.FgHiBlack)
 
-	bold.Println("\n  GoTodo")
-	gray.Println("  ─────────────────────────") // 简化分隔线
+	logo.Print("\n  ┌────────────────────────┐\n")
+	logo.Print("  │         GoTodo         │")
+	logo.Print("\n  └────────────────────────┘\n")
+	border.Println("    Focus on What Matters.")
 }
 
 func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
-	// 定义统一的颜色方案
-	checkbox := color.New(color.FgHiBlue) // 方框使用蓝色
-	task := color.New(color.FgHiWhite)    // 所有未完成任务统一使用亮白色
-	done := color.New(color.FgHiBlack)    // 已完成任务使用深灰色
-	stats := color.New(color.FgHiGreen)   // 统计信息使用绿色
+	// 定义更简洁的颜色方案
+	title := color.New(color.FgHiYellow, color.Bold)
+	done := color.New(color.FgHiBlack)
+	// stats := color.New(color.FgHiGreen)
+	date := color.New(color.FgHiMagenta)
+	divider := color.New(color.FgHiBlack)
+
+	// 优先级只用颜色区分
+	priority := map[string]*color.Color{
+		"high":   color.New(color.FgHiRed),
+		"normal": color.New(color.FgHiBlue),
+		"low":    color.New(color.FgHiWhite),
+	}
 
 	// 分类任务
 	var unfinishedNotes []storage.Note
@@ -33,23 +45,85 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 		}
 	}
 
-	// 显示未完成任务，使用统一的颜色
+    // 获取未完成任务后，按优先级排序
+    priorityWeight := map[string]int{
+        "high":   3,
+        "normal": 2,
+        "low":    1,
+    }
+
+    // 对未完成任务进行排序
+    sort.Slice(unfinishedNotes, func(i, j int) bool {
+        weightI := priorityWeight[unfinishedNotes[i].Priority]
+        weightJ := priorityWeight[unfinishedNotes[j].Priority]
+        if weightI == weightJ {
+            // 如果优先级相同，按创建时间排序（新的在前）
+            return unfinishedNotes[i].CreatedAt.After(unfinishedNotes[j].CreatedAt)
+        }
+        return weightI > weightJ
+    })
+
+    // 显示分隔线和未完成任务
+    divider.Println("  ──────────────────────────")
 	for _, note := range unfinishedNotes {
-		checkbox.Print("  □ ")
-		task.Println(note.Content)
+		p := priority[note.Priority]
+		if p == nil {
+			p = priority["normal"]
+		}
+
+		p.Print("  ● ")
+		if note.Title != "" {
+			title.Printf("%s: ", note.Title)
+		}
+		p.Print(note.Content)
+		if note.DueDate != "" {
+			fmt.Print(" ")
+			date.Printf("📅 %s", note.DueDate)
+		}
+		fmt.Println()
 	}
 
 	// 显示已完成任务
 	if len(finishedNotes) > 0 {
-		done.Println("\n  ─────────────────────────")
+		divider.Println("  ──────────────────────────")
 		for _, note := range finishedNotes {
-			done.Print("  ■ ")
-			done.Println(note.Content)
+			done.Printf("  ✓ %s\n", note.Content)
 		}
 	}
 
-	// 显示统计信息
+	// 显示进度统计
 	if len(notes) > 0 {
-		stats.Printf("\n  %d 个任务 (%d 已完成)\n", len(notes), len(finishedNotes))
+		divider.Println("  ──────────────────────────")
+		ShowProgressBar(len(notes), len(finishedNotes))
+		// 使用更柔和的颜色组合来显示统计信息
+		totalCount := color.New(color.FgHiBlue)
+		completedCount := color.New(color.FgHiGreen)
+		totalCount.Printf("\n  总计：")
+		completedCount.Printf("%d", len(notes))
+		totalCount.Printf(" 个任务（")
+		completedCount.Printf("%d", len(finishedNotes))
+		totalCount.Printf(" 已完成）\n")
 	}
+}
+
+func ShowProgressBar(total, completed int) {
+    width := 21  // 将宽度从30改为20，使显示更加紧凑
+    filled := int(float64(completed) / float64(total) * float64(width))
+    percent := int(float64(completed)/float64(total)*100)
+
+    // 定义新的颜色方案
+    progress := color.New(color.FgHiCyan)    
+    remaining := color.New(color.FgHiBlack)  
+    percentage := color.New(color.FgHiCyan, color.Bold)  
+
+    fmt.Print("  ")  // 保持缩进
+    for i := 0; i < width; i++ {
+        if i < filled {
+            progress.Print("█")
+        } else {
+            remaining.Print("░")
+        }
+    }
+    fmt.Print(" ")  // 在进度条和百分比之间添加空格
+    percentage.Printf("%d%%", percent)
 }

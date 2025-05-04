@@ -1,8 +1,8 @@
 package main
 
 import (
-	"hacknote/cmd"
-	"hacknote/pkg/logger"
+	"gotodo/cmd"
+	"gotodo/pkg/logger"
 	"os"
 )
 

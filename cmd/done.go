@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"hacknote/internal/storage"
-	"hacknote/pkg/logger"
+	"gotodo/internal/renderer"
+	"gotodo/internal/storage"
+	"gotodo/pkg/logger"
 	"os"
 
 	"github.com/fatih/color"
@@ -12,8 +13,9 @@ import (
 )
 
 var doneCmd = &cobra.Command{
-	Use:   "done",
-	Short: "交互式选择并完成任务",
+	Use:     "done",
+	Aliases: []string{"d"},
+	Short:   "Interactively complete tasks",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -29,16 +31,17 @@ var doneCmd = &cobra.Command{
 		}
 
 		if len(unfinishedNotes) == 0 {
-			color.Yellow("没有待完成的任务")
+			color.Yellow("No pending tasks")
 			return nil
 		}
 
 		// 创建选择提示
+		// 更新模板设计
 		templates := &promptui.SelectTemplates{
 			Label:    "{{ . }}",
-			Active:   "→ {{ .Content | magenta }}", // 使用洋红色突出当前选中项
-			Inactive: "  {{ .Content | faint }}",   // 使用暗淡效果显示未选中项
-			Selected: "✓ {{ .Content | yellow }}",  // 使用黄色显示确认选择
+			Active:   "→ {{ .Title | cyan }} {{ .Content | white | bold }} {{ if .DueDate }}({{ .DueDate | magenta }}){{ end }} [{{ .Priority | red }}]",
+			Inactive: "  {{ .Title | faint }} {{ .Content | faint }} {{ if .DueDate }}({{ .DueDate | faint }}){{ end }} [{{ .Priority | faint }}]",
+			Selected: "✓ {{ .Title | green }} {{ .Content | green | bold }} {{ if .DueDate }}({{ .DueDate | green }}){{ end }} [{{ .Priority | green }}]",
 		}
 
 		prompt := promptui.Select{
@@ -70,7 +73,11 @@ var doneCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("任务已完成: %s", selectedNote.Content))
+		logger.Success(fmt.Sprintf("Task completed: %s", selectedNote.Content))
+
+		// 显示更新后的任务列表
+		color.New(color.FgHiCyan).Println("\nCurrent tasks:")
+		renderer.RenderNotes(notes, false, "")
 		return nil
 	},
 }

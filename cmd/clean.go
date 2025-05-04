@@ -2,16 +2,17 @@ package cmd
 
 import (
 	"fmt"
-	"hacknote/internal/storage"
-	"hacknote/pkg/logger"
+	"gotodo/internal/storage"
+	"gotodo/pkg/logger"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 var cleanCmd = &cobra.Command{
-	Use:   "clean",
-	Short: "清理已完成的任务",
+	Use:     "clean",
+	Aliases: []string{"c"},
+	Short:   "Clean completed tasks",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -31,7 +32,7 @@ var cleanCmd = &cobra.Command{
 		}
 
 		if finishedCount == 0 {
-			color.Yellow("  没有已完成的任务需要清理")
+			color.Yellow("  No completed tasks to clean")
 			return nil
 		}
 
@@ -40,7 +41,7 @@ var cleanCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("已清理 %d 个已完成的任务", finishedCount))
+		logger.Success(fmt.Sprintf("Cleaned %d completed tasks", finishedCount))
 		return nil
 	},
 }

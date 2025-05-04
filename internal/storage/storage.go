@@ -3,7 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
-	"hacknote/internal/config"
+	"gotodo/internal/config"
 	"os"
 	"path/filepath"
 	"time"
@@ -72,4 +72,21 @@ func saveNotes(notes []Note) error {
 	}
 
 	return os.WriteFile(filepath.Join(cfg.DataPath, "notes.json"), data, 0644)
+}
+
+// DeleteNote 删除指定ID的任务
+func DeleteNote(id int) error {
+	notes, err := ListNotes()
+	if err != nil {
+		return err
+	}
+
+	var updatedNotes []Note
+	for _, note := range notes {
+		if note.ID != id {
+			updatedNotes = append(updatedNotes, note)
+		}
+	}
+
+	return saveNotes(updatedNotes)
 }
