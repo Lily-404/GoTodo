@@ -71,13 +71,27 @@ todo list
 todo task
 ```
 
+## 📁 Data Storage
+
+**The application stores its data in the following locations:**
+
+### macOS/Linux
+
+* Configuration: `~/.config/gotodo/config.json`
+* Task Data: `~/.local/share/gotodo/notes/notes.json`
+
+### Windows
+
+* Configuration: `%APPDATA%\gotodo\config.json`
+* Task Data: `%APPDATA%\gotodo\notes\notes.json`
+
 ## 🎨 Features
 
-- Priority Management: Supports high, normal, and low priority levels
-- Interactive Mode: Easily manage tasks through an interactive interface
-- Progress Tracking: Visualize task completion progress
+- Priority Management: Supports three priority levels - high, normal, and low
+- Interactive Operation: Easily manage tasks through an interactive interface
+- Progress Statistics: Visually display task completion progress
 - Colorful Output: Enhanced readability with colored text
-- Internationalization: Supports both English and Chinese interfaces
+- Internationalization: Supports both Chinese and English interfaces
 
 ## 🤝 Contributing
 

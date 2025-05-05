@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 type Config struct {
@@ -12,8 +13,46 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	DataPath: "./notes",
+	DataPath: getDefaultDataPath(),
 	Language: "en",
+}
+
+func getDefaultDataPath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "./notes"
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		// Windows: %APPDATA%\gotodo\notes
+		return filepath.Join(home, "AppData", "Roaming", "gotodo", "notes")
+	case "darwin":
+		// macOS: ~/.local/share/gotodo/notes
+		return filepath.Join(home, ".local", "share", "gotodo", "notes")
+	default:
+		// Linux/Unix: ~/.local/share/gotodo/notes
+		return filepath.Join(home, ".local", "share", "gotodo", "notes")
+	}
+}
+
+func getConfigDir() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "./config"
+	}
+
+	switch runtime.GOOS {
+	case "windows":
+		// Windows: %APPDATA%\gotodo
+		return filepath.Join(home, "AppData", "Roaming", "gotodo")
+	case "darwin":
+		// macOS: ~/.config/gotodo
+		return filepath.Join(home, ".config", "gotodo")
+	default:
+		// Linux/Unix: ~/.config/gotodo
+		return filepath.Join(home, ".config", "gotodo")
+	}
 }
 
 func GetConfig() Config {
@@ -28,7 +67,7 @@ func SaveConfig() error {
 		return err
 	}
 
-	configDir := "./config"
+	configDir := getConfigDir()
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		return err
 	}
@@ -38,7 +77,7 @@ func SaveConfig() error {
 
 // loadConfig 从文件加载配置
 func loadConfig() {
-	configPath := filepath.Join("./config", "config.json")
+	configPath := filepath.Join(getConfigDir(), "config.json")
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return // 如果配置文件不存在，使用默认配置

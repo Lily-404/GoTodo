@@ -71,6 +71,20 @@ todo list
 todo task
 ```
 
+## 📁 数据存储
+
+应用程序将数据存储在以下位置：
+
+### macOS/Linux
+
+- 配置文件：`~/.config/gotodo/config.json`
+- 任务数据：`~/.local/share/gotodo/notes/notes.json`
+
+### Windows
+
+- 配置文件： `%APPDATA%\gotodo\config.json`
+- 任务数据： `%APPDATA%\gotodo\notes\notes.json`
+
 ## 🎨 特色功能
 
 - 优先级管理：支持 high、normal、low 三级优先级
