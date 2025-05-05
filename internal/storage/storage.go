@@ -3,10 +3,11 @@ package storage
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Lily-404/todo/internal/config"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/Lily-404/todo/internal/config"
 )
 
 type Note struct {

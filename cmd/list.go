@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
 
@@ -16,7 +18,7 @@ var (
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l"},
-	Short:   "List all tasks",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_list_short"),
 	Example: `  todo list
   todo list --all
   todo list -p high`,
@@ -31,14 +33,14 @@ var listCmd = &cobra.Command{
 			return nil
 		}
 
-		renderer.RenderNotes(notes, true, filterPriority)  // 将 showAll 改为 true
+		renderer.RenderNotes(notes, true, filterPriority) // 将 showAll 改为 true
 		return nil
 	},
 }
 
 func init() {
 	help := color.New(color.FgHiBlue).SprintFunc()
-	listCmd.Flags().BoolVarP(&showAll, "pending", "p", false, help("只显示未完成的任务"))  // 修改参数含义
-	listCmd.Flags().StringVarP(&filterPriority, "priority", "r", "", help("按优先级筛选 (high/normal/low)"))
+	listCmd.Flags().BoolVarP(&showAll, "pending", "p", false, help(i18n.GetMessage(config.GetConfig().Language, "show_pending_only")))
+	listCmd.Flags().StringVarP(&filterPriority, "priority", "r", "", help(i18n.GetMessage(config.GetConfig().Language, "filter_by_priority")))
 	rootCmd.AddCommand(listCmd)
 }

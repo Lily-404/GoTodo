@@ -2,8 +2,11 @@ package renderer
 
 import (
 	"fmt"
-	"github.com/Lily-404/todo/internal/storage"
 	"sort"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
+	"github.com/Lily-404/todo/internal/storage"
 
 	"github.com/fatih/color"
 )
@@ -96,12 +99,8 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 		ShowProgressBar(len(notes), len(finishedNotes))
 		// 使用更柔和的颜色组合来显示统计信息
 		totalCount := color.New(color.FgHiBlue)
-		completedCount := color.New(color.FgHiGreen)
-		totalCount.Printf("\n  总计：")
-		completedCount.Printf("%d", len(notes))
-		totalCount.Printf(" 个任务（")
-		completedCount.Printf("%d", len(finishedNotes))
-		totalCount.Printf(" 已完成）\n")
+		totalCount.Printf("\n  %s", i18n.GetMessage(config.GetConfig().Language, "total_tasks", len(notes), len(finishedNotes)))
+		fmt.Println()
 	}
 }
 

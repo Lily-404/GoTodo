@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
 	"github.com/Lily-404/todo/pkg/logger"
-	"os"
 
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
@@ -19,7 +22,7 @@ func init() {
 var priorityCmd = &cobra.Command{
 	Use:     "priority",
 	Aliases: []string{"p"},
-	Short:   "修改任务优先级",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "modify_priority"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -35,7 +38,7 @@ var priorityCmd = &cobra.Command{
 		}
 
 		if len(unfinishedNotes) == 0 {
-			color.Yellow("没有待处理的任务")
+			color.Yellow(i18n.GetMessage(config.GetConfig().Language, "no_pending_tasks"))
 			return nil
 		}
 
@@ -48,7 +51,7 @@ var priorityCmd = &cobra.Command{
 		}
 
 		prompt := promptui.Select{
-			Label:     "选择要修改优先级的任务",
+			Label:     i18n.GetMessage(config.GetConfig().Language, "select_task_priority"),
 			Items:     unfinishedNotes,
 			Templates: templates,
 			Size:      10,

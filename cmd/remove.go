@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
 	"github.com/Lily-404/todo/pkg/logger"
@@ -14,7 +17,7 @@ import (
 var removeCmd = &cobra.Command{
 	Use:     "remove",
 	Aliases: []string{"rm"},
-	Short:   "删除指定的任务",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_remove_short"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -30,7 +33,7 @@ var removeCmd = &cobra.Command{
 		}
 
 		if len(unfinishedNotes) == 0 {
-			color.Yellow("没有未完成的任务可供删除")
+			color.Yellow(i18n.GetMessage(config.GetConfig().Language, "no_pending_tasks"))
 			return nil
 		}
 
@@ -43,7 +46,7 @@ var removeCmd = &cobra.Command{
 		}
 
 		prompt := promptui.Select{
-			Label:     "选择要删除的任务",
+			Label:     i18n.GetMessage(config.GetConfig().Language, "select_task_to_remove"),
 			Items:     unfinishedNotes,
 			Templates: templates,
 			Size:      10,
@@ -51,7 +54,7 @@ var removeCmd = &cobra.Command{
 
 		idx, _, err := prompt.Run()
 		if err != nil {
-			return fmt.Errorf("选择任务失败: %v", err)
+			return fmt.Errorf(i18n.GetMessage(config.GetConfig().Language, "task_select_failed"), err)
 		}
 
 		selectedNote := unfinishedNotes[idx]
@@ -61,10 +64,10 @@ var removeCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("已删除任务: %s", selectedNote.Content))
+		logger.Success(i18n.GetMessage(config.GetConfig().Language, "task_deleted", selectedNote.Content))
 
 		// 显示更新后的任务列表
-		fmt.Println("\n当前任务列表：")
+		fmt.Println("\n" + i18n.GetMessage(config.GetConfig().Language, "current_tasks"))
 		updatedNotes, err := storage.ListNotes()
 		if err != nil {
 			return err

@@ -2,21 +2,23 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
 	"github.com/Lily-404/todo/pkg/logger"
-	"os"
 
 	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
-// 将 delete.go 重命名为 done.go
 var doneCmd = &cobra.Command{
 	Use:     "done",
-	Aliases: []string{"d"},  // 保留 d 作为快捷命令
-	Short:   "标记任务为已完成",
+	Aliases: []string{"d"},
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_done_short"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -32,12 +34,10 @@ var doneCmd = &cobra.Command{
 		}
 
 		if len(unfinishedNotes) == 0 {
-			color.Yellow("No pending tasks")
+			color.Yellow(i18n.GetMessage(config.GetConfig().Language, "no_pending_tasks"))
 			return nil
 		}
 
-		// 创建选择提示
-		// 更新模板设计
 		templates := &promptui.SelectTemplates{
 			Label:    "{{ . }}",
 			Active:   "→ {{ .Title | cyan }} {{ .Content | white | bold }} {{ if .DueDate }}({{ .DueDate | magenta }}){{ end }} [{{ .Priority | red }}]",
@@ -46,7 +46,7 @@ var doneCmd = &cobra.Command{
 		}
 
 		prompt := promptui.Select{
-			Label:     "选择要完成的任务",
+			Label:     i18n.GetMessage(config.GetConfig().Language, "select_task_to_complete"),
 			Items:     unfinishedNotes,
 			Templates: templates,
 			Size:      10,
@@ -57,10 +57,9 @@ var doneCmd = &cobra.Command{
 			if err == promptui.ErrInterrupt {
 				os.Exit(0)
 			}
-			return err
+			return fmt.Errorf(i18n.GetMessage(config.GetConfig().Language, "task_select_failed"), err)
 		}
 
-		// 更新选中的任务状态
 		selectedNote := unfinishedNotes[i]
 		for i := range notes {
 			if notes[i].ID == selectedNote.ID {
@@ -69,15 +68,13 @@ var doneCmd = &cobra.Command{
 			}
 		}
 
-		// 保存更新后的任务列表
 		if err := storage.SaveNotes(notes); err != nil {
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("Task completed: %s", selectedNote.Content))
+		logger.Success(i18n.GetMessage(config.GetConfig().Language, "task_completed", selectedNote.Content))
 
-		// 显示更新后的任务列表
-		color.New(color.FgHiCyan).Println("\nCurrent tasks:")
+		color.New(color.FgHiCyan).Println("\n" + i18n.GetMessage(config.GetConfig().Language, "current_tasks"))
 		renderer.RenderNotes(notes, false, "")
 		return nil
 	},

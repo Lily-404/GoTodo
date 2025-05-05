@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"time"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
-	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -18,8 +21,8 @@ var (
 
 var addCmd = &cobra.Command{
 	Use:     "add [content]",
-	Aliases: []string{"a","+"},
-	Short:   "Add a new note",
+	Aliases: []string{"a", "+"},
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_add_short"),
 	Example: `  todo add "Complete project documentation" -t "docs" -p high
   todo a "Reply to email" -t "work" -d "2024-01-20"`,
 	Args: cobra.ExactArgs(1),
@@ -34,10 +37,10 @@ var addCmd = &cobra.Command{
 			CreatedAt: time.Now(),
 		}
 
-		// 创建优先级选择
+		// use i18n
 		priorityPrompt := promptui.Select{
-			Label: "选择任务优先级",
-			Items: []string{"low", "normal", "high"},  // 改为从低到高的顺序
+			Label: i18n.GetMessage(config.GetConfig().Language, "select_priority"),
+			Items: []string{"low", "normal", "high"},
 			Templates: &promptui.SelectTemplates{
 				Label:    "{{ . }}",
 				Active:   "➤ {{ . | cyan }}",
@@ -48,13 +51,13 @@ var addCmd = &cobra.Command{
 
 		priorityIdx, _, err := priorityPrompt.Run()
 		if err != nil {
-			return fmt.Errorf("选择优先级失败: %v", err)
+			return fmt.Errorf(i18n.GetMessage(config.GetConfig().Language, "priority_select_failed"), err)
 		}
 
-		priorities := []string{"low", "normal", "high"}  // 这里也需要保持相同的顺序
+		priorities := []string{"low", "normal", "high"} // 这里也需要保持相同的顺序
 		note.Priority = priorities[priorityIdx]
 
-		if err := storage.AddNote(note); err != nil {
+		if addErr := storage.AddNote(note); addErr != nil {
 			return err
 		}
 
@@ -70,8 +73,8 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	addCmd.Flags().StringVarP(&title, "title", "t", "", "Note title")
-	addCmd.Flags().StringVarP(&priority, "priority", "p", "low", "Priority (high/normal/low)")
-	addCmd.Flags().StringVarP(&dueDate, "due", "d", "", "Due date (YYYY-MM-DD)")
+	addCmd.Flags().StringVarP(&title, "title", "t", "", i18n.GetMessage(config.GetConfig().Language, "flag_title"))
+	addCmd.Flags().StringVarP(&priority, "priority", "p", "low", i18n.GetMessage(config.GetConfig().Language, "flag_priority"))
+	addCmd.Flags().StringVarP(&dueDate, "due", "d", "", i18n.GetMessage(config.GetConfig().Language, "flag_due_date"))
 	rootCmd.AddCommand(addCmd)
 }

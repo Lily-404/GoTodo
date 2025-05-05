@@ -1,34 +1,54 @@
 package cmd
 
 import (
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
-var version = "v1.0.0"
+var (
+	version = "v1.1.0"
+)
 
 var rootCmd = &cobra.Command{
-	Use:   "todo",
-	Short: color.HiCyanString("Todo - A Minimalist Terminal Task Manager"),
-	Long: color.HiWhiteString(`Todo is a minimalist yet powerful terminal task manager,
-focused on helping you efficiently manage your todos.
-
-Command Aliases:
-  add (a)  - Add task
-  list (l) - List tasks
-  done (d) - Complete task
-  clean (c) - Clean tasks
-
-Features:`) + color.HiCyanString(`
-  - Clean command-line interface
-  - Efficient task management
-  - Hacker-style terminal experience`),
+	Use:     "todo",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_root_short"),
+	Long:    color.HiWhiteString(i18n.GetMessage(config.GetConfig().Language, "cmd_root_long")),
 	Version: version,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		renderer.ShowBanner()
 	},
+}
+
+func init() {
+	// 设置帮助和版本标志的描述
+	rootCmd.PersistentFlags().BoolP("help", "h", false, i18n.GetMessage(config.GetConfig().Language, "help_flag_short"))
+	rootCmd.PersistentFlags().BoolP("version", "v", false, i18n.GetMessage(config.GetConfig().Language, "version_flag_short"))
+
+	// 隐藏 completion 和 help 命令
+	rootCmd.CompletionOptions.HiddenDefaultCmd = true
+	
+	// 设置自定义的帮助模板
+	helpTemplate := `{{with (or .Long .Short)}}{{. | trimTrailingWhitespaces}}
+
+{{end}}{{if .HasAvailableSubCommands}}` + i18n.GetMessage(config.GetConfig().Language, "available_commands") + `{{range .Commands}}{{if (and (not .Hidden) (or .IsAvailableCommand (eq .Name "help")))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}
+
+{{end}}{{if .HasAvailableLocalFlags}}` + i18n.GetMessage(config.GetConfig().Language, "flags") + `
+{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}
+
+` + i18n.GetMessage(config.GetConfig().Language, "help_usage") + `
+`
+	rootCmd.SetHelpTemplate(helpTemplate)
+
+	// 设置一个隐藏的帮助命令
+	rootCmd.SetHelpCommand(&cobra.Command{
+		Use:    "help [command]",
+		Hidden: true,
+	})
 }
 
 func Execute() error {

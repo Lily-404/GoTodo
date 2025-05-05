@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/Lily-404/todo/internal/renderer"
 	"github.com/Lily-404/todo/internal/storage"
 	"github.com/Lily-404/todo/pkg/logger"
@@ -13,7 +16,7 @@ import (
 var cleanCmd = &cobra.Command{
 	Use:     "clean",
 	Aliases: []string{"c"},
-	Short:   "Clean completed tasks",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_clean_short"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -49,7 +52,7 @@ var cleanCmd = &cobra.Command{
 		}
 
 		logger.Success(fmt.Sprintf("已清理 %d 个已完成的任务", len(finishedNotes)))
-		
+
 		// 显示当前所有任务
 		fmt.Println("\n当前任务列表：")
 		updatedNotes, err := storage.ListNotes()
@@ -57,7 +60,7 @@ var cleanCmd = &cobra.Command{
 			return err
 		}
 		renderer.RenderNotes(updatedNotes, false, "")
-		
+
 		return nil
 	},
 }

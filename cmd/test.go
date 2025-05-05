@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/Lily-404/todo/internal/config"
+	"github.com/Lily-404/todo/internal/i18n"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -12,25 +14,23 @@ import (
 var testCmd = &cobra.Command{
 	Use:     "test",
 	Aliases: []string{"t"},
-	Short:   "Test and build project",
+	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_test_short"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		info := color.New(color.FgHiCyan)
 		success := color.New(color.FgHiGreen)
 		fail := color.New(color.FgHiRed)
 
-		// 构建项目
-		info.Println("\n  Building project...")
+		info.Println("\n  " + i18n.GetMessage(config.GetConfig().Language, "building_project"))
 		buildCmd := exec.Command("go", "build", "-o", "todo")
 		buildCmd.Stdout = os.Stdout
 		buildCmd.Stderr = os.Stderr
 		if err := buildCmd.Run(); err != nil {
-			fail.Println("  构建失败")
+			fail.Println("  " + i18n.GetMessage(config.GetConfig().Language, "build_failed"))
 			return err
 		}
-		success.Println("  Build successful")
+		success.Println("  " + i18n.GetMessage(config.GetConfig().Language, "build_success"))
 
-		// 测试各个命令
-		info.Println("\n  Starting functional tests...")
+		info.Println("\n  " + i18n.GetMessage(config.GetConfig().Language, "starting_tests"))
 
 		// 清理旧数据
 		runCommand("rm", "-f", "notes/notes.json")
