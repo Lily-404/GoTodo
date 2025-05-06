@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	version = "v1.2.0"
+	version = "v1.2.1"
 )
 
 var rootCmd = &cobra.Command{
@@ -37,7 +37,7 @@ func init() {
 
 	// 隐藏 completion 和 help 命令
 	rootCmd.CompletionOptions.HiddenDefaultCmd = true
-	
+
 	// 设置自定义的帮助模板
 	helpTemplate := `{{with (or .Long .Short)}}{{. | trimTrailingWhitespaces}}
 
