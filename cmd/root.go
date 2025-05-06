@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/Lily-404/todo/internal/config"
 	"github.com/Lily-404/todo/internal/i18n"
-	"github.com/Lily-404/todo/internal/renderer"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -14,13 +15,19 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "todo",
-	Short:   i18n.GetMessage(config.GetConfig().Language, "cmd_root_short"),
-	Long:    color.HiWhiteString(i18n.GetMessage(config.GetConfig().Language, "cmd_root_long")),
-	Version: version,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		renderer.ShowBanner()
-	},
+	Use:   "todo",
+	Short: i18n.GetMessage(config.GetConfig().Language, "cmd_root_short"),
+	Long:  color.HiWhiteString(i18n.GetMessage(config.GetConfig().Language, "cmd_root_long")),
+	Version: fmt.Sprintf(`
+ _______   _______           _________  _______   _______   _______ 
+|\   ____\|\   __  \        |\___   ___\\   __  \|\   ___ \|\   __  \    
+\ \  \___|\ \  \|\  \       \|___ \  \_\ \  \|\  \ \  \_|\ \ \  \|\  \   
+ \ \  \  __\ \  \\\  \           \ \  \ \ \  \\\  \ \  \ \\ \ \  \\\  \  
+  \ \  \|\  \ \  \\\  \           \ \  \ \ \  \\\  \ \  \_\\ \ \  \\\  \ 
+   \ \_______\ \_______\           \ \__\ \ \_______\ \_______\ \_______\
+    \|_______|\|_______|            \|__|  \|_______|\|_______|\|_______|                                                                                                                                                                                      
+Version: %s
+`, version),
 }
 
 func init() {

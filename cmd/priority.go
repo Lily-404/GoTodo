@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/Lily-404/todo/internal/config"
@@ -66,9 +65,13 @@ var priorityCmd = &cobra.Command{
 		}
 
 		// 选择新的优先级（从低到高排序）
-		priorities := []string{"low", "normal", "high"}
+		priorities := []string{
+			i18n.GetMessage(config.GetConfig().Language, "priority_low"),
+			i18n.GetMessage(config.GetConfig().Language, "priority_normal"),
+			i18n.GetMessage(config.GetConfig().Language, "priority_high"),
+		}
 		priorityPrompt := promptui.Select{
-			Label: "选择新的优先级",
+			Label: i18n.GetMessage(config.GetConfig().Language, "select_new_priority"),
 			Items: priorities,
 		}
 
@@ -91,10 +94,10 @@ var priorityCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("任务优先级已更新: %s -> %s", selectedNote.Content, priorities[p]))
+		logger.Success(i18n.GetMessage(config.GetConfig().Language, "task_priority_updated", selectedNote.Content, priorities[p]))
 
 		// 显示更新后的任务列表
-		color.New(color.FgHiCyan).Println("\n当前任务列表:")
+		color.New(color.FgHiCyan).Println("\n" + i18n.GetMessage(config.GetConfig().Language, "current_tasks"))
 		renderer.RenderNotes(notes, false, "")
 		return nil
 	},

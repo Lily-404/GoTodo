@@ -23,6 +23,15 @@ var listCmd = &cobra.Command{
   todo list --all
   todo list -p high`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// 显示 banner
+		logo := color.New(color.FgHiCyan, color.Bold)
+		border := color.New(color.FgHiBlack)
+
+		logo.Print("\n  ┌────────────────────────┐\n")
+		logo.Print("  │         Go Todo        │")
+		logo.Print("\n  └────────────────────────┘\n")
+		border.Println("    Focus on What Matters.")
+
 		info := color.New(color.FgHiCyan, color.Bold)
 		notes, err := storage.ListNotes()
 		if err != nil {
@@ -33,7 +42,7 @@ var listCmd = &cobra.Command{
 			return nil
 		}
 
-		renderer.RenderNotes(notes, true, filterPriority) // 将 showAll 改为 true
+		renderer.RenderNotes(notes, true, filterPriority)
 		return nil
 	},
 }

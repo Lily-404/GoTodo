@@ -60,7 +60,7 @@ var removeCmd = &cobra.Command{
 		selectedNote := unfinishedNotes[idx]
 
 		// 删除选中的任务
-		if err := storage.DeleteNote(selectedNote.ID); err != nil {
+		if deleteErr := storage.DeleteNote(selectedNote.ID); deleteErr != nil {
 			return err
 		}
 

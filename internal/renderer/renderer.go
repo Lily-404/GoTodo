@@ -11,16 +11,6 @@ import (
 	"github.com/fatih/color"
 )
 
-func ShowBanner() {
-	logo := color.New(color.FgHiCyan, color.Bold)
-	border := color.New(color.FgHiBlack)
-
-	logo.Print("\n  ┌────────────────────────┐\n")
-	logo.Print("  │         Go Todo        │")
-	logo.Print("\n  └────────────────────────┘\n")
-	border.Println("    Focus on What Matters.")
-}
-
 func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 	// 定义更简洁的颜色方案
 	title := color.New(color.FgHiYellow, color.Bold)
@@ -105,7 +95,7 @@ func RenderNotes(notes []storage.Note, showAll bool, filterPriority string) {
 }
 
 func ShowProgressBar(total, completed int) {
-	width := 21 // 将宽度从30改为20，使显示更加紧凑
+	width := 23 
 	filled := int(float64(completed) / float64(total) * float64(width))
 	percent := int(float64(completed) / float64(total) * 100)
 

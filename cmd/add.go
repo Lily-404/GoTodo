@@ -40,7 +40,11 @@ var addCmd = &cobra.Command{
 		// use i18n
 		priorityPrompt := promptui.Select{
 			Label: i18n.GetMessage(config.GetConfig().Language, "select_priority"),
-			Items: []string{"low", "normal", "high"},
+			Items: []string{
+				i18n.GetMessage(config.GetConfig().Language, "priority_low"),
+				i18n.GetMessage(config.GetConfig().Language, "priority_normal"),
+				i18n.GetMessage(config.GetConfig().Language, "priority_high"),
+			},
 			Templates: &promptui.SelectTemplates{
 				Label:    "{{ . }}",
 				Active:   "➤ {{ . | cyan }}",
@@ -54,7 +58,8 @@ var addCmd = &cobra.Command{
 			return fmt.Errorf(i18n.GetMessage(config.GetConfig().Language, "priority_select_failed"), err)
 		}
 
-		priorities := []string{"low", "normal", "high"} // 这里也需要保持相同的顺序
+		// 定义存储用的优先级值（保持与显示顺序一致）
+		priorities := []string{"low", "normal", "high"}
 		note.Priority = priorities[priorityIdx]
 
 		if addErr := storage.AddNote(note); addErr != nil {

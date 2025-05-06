@@ -35,12 +35,12 @@ var cleanCmd = &cobra.Command{
 		}
 
 		if len(finishedNotes) == 0 {
-			color.Yellow("  没有已完成的任务需要清理")
+			color.Yellow(i18n.GetMessage(config.GetConfig().Language, "no_completed_tasks"))
 			return nil
 		}
 
 		// 显示已完成的任务列表
-		color.HiCyan("\n将要清理的已完成任务：")
+		color.HiCyan("\n" + i18n.GetMessage(config.GetConfig().Language, "tasks_to_clean"))
 		for i, note := range finishedNotes {
 			color.HiBlack(fmt.Sprintf("  %d. %s", i+1, note.Content))
 		}
@@ -51,10 +51,9 @@ var cleanCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Success(fmt.Sprintf("已清理 %d 个已完成的任务", len(finishedNotes)))
+		logger.Success(i18n.GetMessage(config.GetConfig().Language, "cleaned_tasks", len(finishedNotes)))
 
-		// 显示当前所有任务
-		fmt.Println("\n当前任务列表：")
+		fmt.Println("\n" + i18n.GetMessage(config.GetConfig().Language, "current_tasks"))
 		updatedNotes, err := storage.ListNotes()
 		if err != nil {
 			return err
