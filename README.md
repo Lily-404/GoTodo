@@ -4,9 +4,13 @@
 
 Todo is a terminal task management tool written in Go, focused on efficiently managing your todos.
 
-![1747645521336](images/README/1747645521336.png)
 
-![1747645500813](images/README/1747645500813.png)
+<table>
+<tr>
+<td><img src="images/README/1747645521336.png" width="400"></td>
+<td><img src="images/README/1747645500813.png" width="400"></td>
+</tr>
+</table>
 
 ## 📦 Installation
 
